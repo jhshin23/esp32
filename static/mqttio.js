@@ -38,7 +38,6 @@ function onConnect() {
   // 항상 구독 (핵심)
   client.subscribe("desk/authResult");
   client.subscribe("desk/sensor/ultrasonic");
-  client.subscribe("desk/seat/state");
 
   // light/shadow는 버튼으로 구독 유지(원본 감성)
 }
@@ -90,6 +89,8 @@ function showResult(authState) {
   else if (authState === "sitting_Authed") {
     document.getElementById("masterAuthSpan").innerHTML = "인증성공";
     document.getElementById("useState").innerHTML = "사용중";
+    client.subscribe("desk/seat/state");
+
   }
   else if (authState === "sitting_not") document.getElementById("masterAuthSpan").innerHTML = "인증실패";
   else if (authState === "away_Authed") {
@@ -106,12 +107,17 @@ function changeBookTitle(title) {
 
 function pageFlipCount(cnt) {
   const reading = document.getElementById("shadowCount");
-  const parts = cnt.split(",");
-  const time = parts[0] ?? "";
-  const page = parts[1] ?? cnt;
+
+  // 현재 시간 생성
+  const now = new Date();
+  const time = now.toLocaleString("ko-KR");
+
+
+  const page = cnt; // 지금은 페이지 번호 or 카운트만 온다고 가정
 
   readingLog.push(`${page} (${time})`);
   if (readingLog.length > 10) readingLog.shift();
+
   reading.innerHTML = readingLog.join("<br>");
 }
 
