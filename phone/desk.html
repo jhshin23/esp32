@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- MQTT over WebSocket -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
+  <!-- ✅ 환경 설정 -->
+  <script>
+    const BROKER_IP = "192.168.43.1";   // 🔴 폰 hotspot IP
+    const WS_PORT   = 9001;
+    const WS_PATH   = "/mqtt";
+  </script>
+
+  <!-- 로컬 JS -->
+  <script src="myChart.js"></script>
+  <script src="mqttio.js"></script>
+
+  <title>책상 대시보드</title>
+</head>
+
+<body onload="connect(); drawChart();">
+
+  <h3>
+    상태: <span id="masterAuthSpan">미인증</span><br />
+    <span id="useState">사용안함</span>
+  </h3>
+
+  <button onclick="publish('desk/authReq','setDistanceAuth')">인증해서 착석 시작</button>
+  <button onclick="publish('desk/authReq','notUse')">인증해서 떠나기</button>
+
+  <div id="sittingState"></div>
+  <hr>
+
+  <h3>초음파</h3>
+  <button onclick="hideshow('ultraCanvas')">Hide/Show</button>
+  <canvas id="ultraCanvas" width="600" height="400"></canvas>
+
+  <hr>
+
+  <h3>독서 그림자 감지</h3>
+  <button onclick="subscribe('desk/reading/shadowOnBook')">측정시작</button>
+  <button onclick="unsubscribe('desk/reading/shadowOnBook')">중단</button>
+  <div id="shadowCount"></div>
+
+  <hr>
+
+  <h3>조도</h3>
+  <button onclick="subscribe('desk/sensor/light')">측정시작</button>
+  <button onclick="unsubscribe('desk/sensor/light')">중단</button>
+  <button onclick="hideshow('lightCanvas')">Hide/Show</button>
+  <canvas id="lightCanvas" width="600" height="400"></canvas>
+
+  <hr>
+
+  <h3>숨 인증</h3>
+  <button onclick="publish('desk/authReq','checkAuth')">인증요청</button>
+  <div>결과: <span id="viewerAuthSpan"></span></div>
+
+</body>
+</html>
